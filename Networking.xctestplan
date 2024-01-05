@@ -1,8 +1,8 @@
 {
   "configurations" : [
     {
-      "id" : "72677812-18F7-479F-8557-4E64126C0EB3",
-      "name" : "Test Scheme Action",
+      "id" : "C957A1BF-0E74-4CCD-91E8-12744EA36294",
+      "name" : "Configuration 1",
       "options" : {
 
       }
@@ -13,8 +13,8 @@
       "targets" : [
         {
           "containerPath" : "container:",
-          "identifier" : "Network",
-          "name" : "Network"
+          "identifier" : "Networking",
+          "name" : "Networking"
         }
       ]
     }
@@ -23,8 +23,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "NetworkTests",
-        "name" : "NetworkTests"
+        "identifier" : "NetworkingTests",
+        "name" : "NetworkingTests"
       }
     }
   ],

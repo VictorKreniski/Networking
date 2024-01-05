@@ -22,7 +22,7 @@ let package = Package(
             name: "Networking",
             dependencies: []),
         .testTarget(
-            name: "NetworkTests",
+            name: "NetworkingTests",
             dependencies: ["Networking"]),
     ]
 )
