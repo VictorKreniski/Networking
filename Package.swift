@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Network",
+    name: "Networking",
     platforms: [
         .iOS(.v15),
         .macCatalyst(.v15),
@@ -14,15 +14,15 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Network",
-            targets: ["Network"]),
+            name: "Networking",
+            targets: ["Networking"]),
     ],
     targets: [
         .target(
-            name: "Network",
+            name: "Networking",
             dependencies: []),
         .testTarget(
             name: "NetworkTests",
-            dependencies: ["Network"]),
+            dependencies: ["Networking"]),
     ]
 )

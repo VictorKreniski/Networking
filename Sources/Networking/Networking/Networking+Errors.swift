@@ -1,4 +1,4 @@
-public extension Network {
+public extension Networking {
     enum Errors: Error, Equatable {
         case decode
         case invalidURL(urlString: String)
