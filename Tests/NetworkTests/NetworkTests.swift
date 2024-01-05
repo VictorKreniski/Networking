@@ -62,12 +62,15 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 200, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 200, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
-        let _: TestData = try await sut.run(
+        let object: TestData = try await sut.run(
             urlSession: urlSessionMock,
             encoder: jsonEncoderMock,
             decoder: jsonDecoderMock
@@ -80,6 +83,7 @@ final class NetworkTests: XCTestCase {
         XCTAssertEqual(httpBodyDecoded, String.validJSONBodyString)
         XCTAssertEqual(urlSessionMock.requestSent?.timeoutInterval, 60)
         XCTAssertEqual(urlSessionMock.requestSent?.allHTTPHeaderFields, ["Key": "Value"])
+        XCTAssertEqual(object, .init())
     }
     
     func testRunWithDecodeError() async throws {
@@ -93,12 +97,13 @@ final class NetworkTests: XCTestCase {
         )
         
         let data = try JSONEncoder().encode([1])
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 200, httpVersion: .none, headerFields: .none))
         
         jsonDecoderMock.shouldThrow = Errors.fake
         
         urlSessionMock.result = (
             data,
-            HTTPURLResponse(url: validURL, statusCode: 200, httpVersion: .none, headerFields: .none)!
+            httpResponse
         )
         
         do {
@@ -107,7 +112,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("Should throw")
+            XCTFail("Should throw decoding error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .decode)
         }
@@ -123,9 +128,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 401, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 401, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -134,7 +142,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown unauthorized error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .unauthorized)
         }
@@ -150,9 +158,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 403, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 403, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -161,7 +172,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown forbidden error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .forbidden)
         }
@@ -177,9 +188,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 400, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 400, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -188,7 +202,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown badRequest error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .badRequest)
         }
@@ -204,9 +218,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 500, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 500, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -215,7 +232,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown noConnection error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .noConnection)
         }
@@ -231,8 +248,10 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
+            validBodyString,
             URLResponse()
         )
         
@@ -242,7 +261,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown noResponse error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .noResponse)
         }
@@ -258,9 +277,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 900, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 900, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -269,7 +291,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown unexpectedStatusCode(900) error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .unexpectedStatusCode(statusCode: 900))
         }
@@ -285,9 +307,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 200, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 200, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         try await sut.run(
@@ -327,7 +352,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("Should throw")
+            XCTFail("It should have thrown noResponse error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .noResponse)
         }
@@ -343,9 +368,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 401, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 401, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -354,7 +382,7 @@ final class NetworkTests: XCTestCase {
                 encoder: jsonEncoderMock,
                 decoder: jsonDecoderMock
             )
-            XCTFail("It should have thrown error")
+            XCTFail("It should have thrown unauthorized error")
         } catch {
             XCTAssertEqual(error as? Network.Errors, .unauthorized)
         }
@@ -370,9 +398,12 @@ final class NetworkTests: XCTestCase {
             body: String.validJSONBodyString
         )
         
+        let validBodyString = try XCTUnwrap(String.validJSONBodyString.data(using: .utf8))
+        let httpResponse = try XCTUnwrap(HTTPURLResponse(url: validURL, statusCode: 900, httpVersion: .none, headerFields: .none))
+        
         urlSessionMock.result = (
-            String.validJSONBodyString.data(using: .utf8)!,
-            HTTPURLResponse(url: validURL, statusCode: 900, httpVersion: .none, headerFields: .none)!
+            validBodyString,
+            httpResponse
         )
         
         do {
@@ -416,7 +447,7 @@ private extension Dictionary where Key == String, Value == String {
 
 private extension NetworkTests {
     
-    struct TestData: Codable {
+    struct TestData: Codable, Equatable {
 
         let message: String
         let author: String
