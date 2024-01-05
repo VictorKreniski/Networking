@@ -1,6 +1,6 @@
 import Foundation
 
-public extension Network {
+public extension Networking {
     struct Request {
         public let url: URL
         public let method: Method
@@ -61,7 +61,7 @@ public extension Network {
     }
 }
 
-private extension Network.Request {
+private extension Networking.Request {
     func createRequest(encoder: JSONEncoder) throws -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
@@ -80,15 +80,15 @@ private extension Network.Request {
         case 200...299:
             break
         case 401:
-            throw Network.Errors.unauthorized
+            throw Networking.Errors.unauthorized
         case 403:
-            throw Network.Errors.forbidden
+            throw Networking.Errors.forbidden
         case 400...499:
-            throw Network.Errors.badRequest
+            throw Networking.Errors.badRequest
         case 500...599:
-            throw Network.Errors.noConnection
+            throw Networking.Errors.noConnection
         default:
-            throw Network.Errors.unexpectedStatusCode(statusCode: statusCode)
+            throw Networking.Errors.unexpectedStatusCode(statusCode: statusCode)
         }
     }
 }

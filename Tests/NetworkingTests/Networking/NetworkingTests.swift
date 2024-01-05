@@ -1,7 +1,7 @@
 import XCTest
-@testable import Network
+@testable import Networking
 
-final class NetworkTests: XCTestCase {
+final class NetworkingTests: XCTestCase {
     
     private var urlSessionMock: URLSessionMock!
     private var jsonEncoderMock: JSONEncoderMock!
@@ -25,7 +25,7 @@ final class NetworkTests: XCTestCase {
         let body = "Encode"
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -41,7 +41,7 @@ final class NetworkTests: XCTestCase {
     func testInitWithOnlyRequired() throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post
         )
@@ -55,7 +55,7 @@ final class NetworkTests: XCTestCase {
     func testRunWithAllValues() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -89,7 +89,7 @@ final class NetworkTests: XCTestCase {
     func testRunWithDecodeError() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -114,14 +114,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("Should throw decoding error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .decode)
+            XCTAssertEqual(error as? Networking.Errors, .decode)
         }
     }
     
     func testRunUnauthorized() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -144,14 +144,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown unauthorized error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .unauthorized)
+            XCTAssertEqual(error as? Networking.Errors, .unauthorized)
         }
     }
     
     func testRunForbidden() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -174,14 +174,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown forbidden error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .forbidden)
+            XCTAssertEqual(error as? Networking.Errors, .forbidden)
         }
     }
     
     func testRunBadRequest() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -204,14 +204,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown badRequest error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .badRequest)
+            XCTAssertEqual(error as? Networking.Errors, .badRequest)
         }
     }
     
     func testRunNoConnection() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -234,14 +234,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown noConnection error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .noConnection)
+            XCTAssertEqual(error as? Networking.Errors, .noConnection)
         }
     }
     
     func testRunWhenResponseIsNotHTTPURLResponse() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -263,14 +263,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown noResponse error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .noResponse)
+            XCTAssertEqual(error as? Networking.Errors, .noResponse)
         }
     }
     
     func testRunUnexpectedStatusCode() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -293,14 +293,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown unexpectedStatusCode(900) error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .unexpectedStatusCode(statusCode: 900))
+            XCTAssertEqual(error as? Networking.Errors, .unexpectedStatusCode(statusCode: 900))
         }
     }
     
     func testRunWithAllValuesWithoutReturn() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -322,7 +322,7 @@ final class NetworkTests: XCTestCase {
         )
         
         XCTAssertNil(urlSessionMock.delegateSent)
-        XCTAssertEqual(urlSessionMock.requestSent?.httpMethod, Network.Method.post.rawValue)
+        XCTAssertEqual(urlSessionMock.requestSent?.httpMethod, Networking.Method.post.rawValue)
         let httpBody = try XCTUnwrap(urlSessionMock.requestSent?.httpBody)
         let httpBodyDecoded = try XCTUnwrap(JSONDecoder().decode(String.self, from: httpBody))
         XCTAssertEqual(httpBodyDecoded, String.validJSONBodyString)
@@ -333,7 +333,7 @@ final class NetworkTests: XCTestCase {
     func testRunWithNoResponseWithoutReturn() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -354,14 +354,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown noResponse error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .noResponse)
+            XCTAssertEqual(error as? Networking.Errors, .noResponse)
         }
     }
     
     func testRunUnauthorizedWithoutReturn() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -384,14 +384,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown unauthorized error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .unauthorized)
+            XCTAssertEqual(error as? Networking.Errors, .unauthorized)
         }
     }
     
     func testRunUnexpectedStatusCodeWithoutReturn() async throws {
         let validURL = try XCTUnwrap(URL.validURL)
         
-        let sut: Network.Request = try .init(
+        let sut: Networking.Request = try .init(
             url: validURL,
             method: .post,
             headers: .headersString,
@@ -414,14 +414,14 @@ final class NetworkTests: XCTestCase {
             )
             XCTFail("It should have thrown error")
         } catch {
-            XCTAssertEqual(error as? Network.Errors, .unexpectedStatusCode(statusCode: 900))
+            XCTAssertEqual(error as? Networking.Errors, .unexpectedStatusCode(statusCode: 900))
         }
     }
 }
 
 private extension String {
     static var validJSONBodyString: String {
-        NetworkTests.TestData.jsonString
+        NetworkingTests.TestData.jsonString
     }
     
     static var messageName: String {
@@ -445,7 +445,7 @@ private extension Dictionary where Key == String, Value == String {
     }
 }
 
-private extension NetworkTests {
+private extension NetworkingTests {
     
     struct TestData: Codable, Equatable {
 
